@@ -1,0 +1,21 @@
+/home/project/final_project$ pwd
+/home/project/final_project
+/home/project/final_project$ python3
+Python 3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from emotion_detection import emotion_detector
+>>> print(emotion_detector('I am really mad about this'))
+{'anger': 1.0, 'disgust': 0.0, 'fear': 0.0, 'joy': 0.0, 'sadness': 0.0, 'dominant_emotion': 'anger'}
+>>> exit()
+/home/project/final_project$ python3 test_emotion_detection.py
+test_angry_text_when_service_unavailable (__main__.TestEmotionDetection.test_angry_text_when_service_unavailable) ... ok
+test_live_watson_response_is_formatted (__main__.TestEmotionDetection.test_live_watson_response_is_formatted) ... ok
+test_non_transient_http_error_is_not_silenced (__main__.TestEmotionDetection.test_non_transient_http_error_is_not_silenced) ... ok
+test_unknown_text_fallback_has_no_dominant_emotion (__main__.TestEmotionDetection.test_unknown_text_fallback_has_no_dominant_emotion) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.002s
+
+OK
+/home/project/final_project$ exit
+exit
