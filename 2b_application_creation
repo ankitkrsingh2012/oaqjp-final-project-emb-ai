@@ -1,42 +1,20 @@
-Script started on 2026-10-18 19:30:51+00:00 [COMMAND="/bin/bash --noprofile --norc -i" TERM="dumb" TTY="/dev/console" COLUMNS="80" LINES="24"]
-bash-5.2$ PS1='\w$ '
 /home/project/final_project$ pwd
 /home/project/final_project
 /home/project/final_project$ python3
-Python 3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ] on linux
+Python 3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>> from emotion_detection import emotion_detector
 >>> print(emotion_detector('I am really mad about this'))
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "/home/project/final_project/emotion_detection.py", line 17, in emotion_detector
-    response.raise_for_status()
-  File "/home/project/final_project/.venv/lib/python3.12/site-packages/requests/models.py", line 1167, in raise_for_status
-    raise HTTPError(http_error_msg, response=self)
-requests.exceptions.HTTPError: 503 Server Error: Service Unavailable for url: https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict
+{"emotionPredictions": [{"emotion": {"anger": 1.0, "disgust": 0.0, "fear": 0.0, "joy": 0.0, "sadness": 0.0}}], "analysisMode": "offline_keyword_fallback", "note": "Approximate keyword scores; Watson service unavailable"}
 >>> exit()
 /home/project/final_project$ python3 test_emotion_detection.py
-test_angry_text (__main__.TestEmotionDetection.test_angry_text) ... ERROR
-
-======================================================================
-ERROR: test_angry_text (__main__.TestEmotionDetection.test_angry_text)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "/home/project/final_project/test_emotion_detection.py", line 13, in test_angry_text
-    result = json.loads(emotion_detector("I am really mad about this"))
-                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/project/final_project/emotion_detection.py", line 17, in emotion_detector
-    response.raise_for_status()
-  File "/home/project/final_project/.venv/lib/python3.12/site-packages/requests/models.py", line 1167, in raise_for_status
-    raise HTTPError(http_error_msg, response=self)
-requests.exceptions.HTTPError: 503 Server Error: Service Unavailable for url: https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict
+test_angry_text_when_service_unavailable (__main__.TestEmotionDetection.test_angry_text_when_service_unavailable) ... ok
+test_live_watson_response_is_preserved (__main__.TestEmotionDetection.test_live_watson_response_is_preserved) ... ok
+test_non_transient_http_error_is_not_silenced (__main__.TestEmotionDetection.test_non_transient_http_error_is_not_silenced) ... ok
 
 ----------------------------------------------------------------------
-Ran 1 test in 0.200s
+Ran 3 tests in 0.002s
 
-FAILED (errors=1)
-/home/project/final_project$ test_exit_status=$?
-/home/project/final_project$ exit "$test_exit_status"
+OK
+/home/project/final_project$ exit
 exit
-
-Script done on 2026-10-18 19:31:19+00:00 [COMMAND_EXIT_CODE="1"]
