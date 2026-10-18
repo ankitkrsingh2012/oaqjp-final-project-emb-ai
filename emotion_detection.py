@@ -6,6 +6,7 @@ approximate keyword-based fallback is used (not a Watson prediction).
 """
 
 import json
+import os
 import re
 
 import requests
@@ -50,10 +51,25 @@ def _local_keyword_fallback(text):
     return _format_emotions(scores)
 
 
+def _invalid_input_result():
+    """Return a well-formed response for HTTP 400 invalid-input errors."""
+    return {
+        "anger": None,
+        "disgust": None,
+        "fear": None,
+        "joy": None,
+        "sadness": None,
+        "dominant_emotion": None,
+    }
+
+
 def emotion_detector(text_to_analyse):
     """Return anger, disgust, fear, joy, sadness, and dominant_emotion."""
     if not isinstance(text_to_analyse, str):
         raise TypeError("text_to_analyse must be a string")
+
+    if os.environ.get("EMOTION_OFFLINE_ONLY") == "1":
+        return _local_keyword_fallback(text_to_analyse)
 
     headers = {
         "grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"
@@ -70,6 +86,8 @@ def emotion_detector(text_to_analyse):
         return _format_emotions(emotion_scores)
     except requests.exceptions.HTTPError as error:
         status = error.response.status_code if error.response is not None else None
+        if status == 400:
+            return _invalid_input_result()
         if status not in (500, 502, 503, 504):
             raise
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
