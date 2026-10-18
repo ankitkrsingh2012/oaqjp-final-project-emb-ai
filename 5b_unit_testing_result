@@ -1,0 +1,13 @@
+/home/project/final_project$ python3 test_emotion_detection.py
+test_anger (__main__.TestEmotionDetection.test_anger) ... ok
+test_disgust (__main__.TestEmotionDetection.test_disgust) ... ok
+test_fear (__main__.TestEmotionDetection.test_fear) ... ok
+test_joy (__main__.TestEmotionDetection.test_joy) ... ok
+test_sadness (__main__.TestEmotionDetection.test_sadness) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.002s
+
+OK
+/home/project/final_project$ echo $?
+0
