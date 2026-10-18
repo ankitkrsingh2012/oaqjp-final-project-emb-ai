@@ -1,4 +1,4 @@
-"""Unit tests for live-response handling and explicit Watson-outage fallback."""
+"""Unit tests for the Task 3 emotion detector output format."""
 
 import json
 import unittest
@@ -12,26 +12,41 @@ from emotion_detection import emotion_detector
 class TestEmotionDetection(unittest.TestCase):
     def test_angry_text_when_service_unavailable(self):
         with patch("emotion_detection.requests.post", side_effect=requests.ConnectionError):
-            result = json.loads(emotion_detector("I am really mad about this"))
-        predictions = result["emotionPredictions"]
-        self.assertGreater(len(predictions), 0)
-        emotions = predictions[0]["emotion"]
-        expected = {"anger", "disgust", "fear", "joy", "sadness"}
-        self.assertTrue(expected.issubset(emotions))
-        for emotion in expected:
-            self.assertIsInstance(emotions[emotion], (int, float))
-            self.assertGreaterEqual(emotions[emotion], 0)
-            self.assertLessEqual(emotions[emotion], 1)
-        self.assertEqual(max(expected, key=emotions.get), "anger")
-        self.assertEqual(result["analysisMode"], "offline_keyword_fallback")
+            result = emotion_detector("I am really mad about this")
+        self.assertEqual(
+            set(result),
+            {"anger", "disgust", "fear", "joy", "sadness", "dominant_emotion"},
+        )
+        self.assertEqual(result["dominant_emotion"], "anger")
+        self.assertEqual(result["anger"], 1.0)
 
-    def test_live_watson_response_is_preserved(self):
-        sample = '{"emotionPredictions": [{"emotion": {"anger": 0.9}}]}'
+    def test_live_watson_response_is_formatted(self):
+        sample = {
+            "emotionPredictions": [{
+                "emotion": {
+                    "anger": 0.05, "disgust": 0.01, "fear": 0.03,
+                    "joy": 0.86, "sadness": 0.05,
+                }
+            }]
+        }
         response = Mock()
-        response.text = sample
+        response.text = json.dumps(sample)
         response.raise_for_status.return_value = None
         with patch("emotion_detection.requests.post", return_value=response):
-            self.assertEqual(emotion_detector("I am really mad about this"), sample)
+            result = emotion_detector("I am so happy I am doing this")
+        self.assertEqual(result, {
+            "anger": 0.05,
+            "disgust": 0.01,
+            "fear": 0.03,
+            "joy": 0.86,
+            "sadness": 0.05,
+            "dominant_emotion": "joy",
+        })
+
+    def test_unknown_text_fallback_has_no_dominant_emotion(self):
+        with patch("emotion_detection.requests.post", side_effect=requests.Timeout):
+            result = emotion_detector("xyz")
+        self.assertIsNone(result["dominant_emotion"])
 
     def test_non_transient_http_error_is_not_silenced(self):
         response = requests.Response()
